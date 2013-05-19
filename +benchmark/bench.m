@@ -1,9 +1,9 @@
-function info = bench(computation, nIter, verbosity, doplot)
+function info = bench(computation, nSamples, verbosity, doplot)
 % BENCH Benchmarks a computation.
 %
 % INPUTS
 %   computation     A function handle with zero arguments.
-%   nIter           Number of samples (defaults to 100)
+%   nSamples        Number of samples (defaults to 100)
 %   verbosity       Verbosity = 0, 1 or 2 (defaults to 2)
 %   doPlot          Boolean indicating whether to plot figures or not
 %
@@ -12,7 +12,7 @@ function info = bench(computation, nIter, verbosity, doplot)
 %
 
     if nargin < 2
-        nIter = 100;
+        nSamples = 100;
     end
     if nargin < 3
         verbosity = 2;
@@ -25,14 +25,14 @@ function info = bench(computation, nIter, verbosity, doplot)
     if ~isa(computation, 'function_handle')
         error('benchmark:bench:NotAFunctionHandle','First input must be a function handle')
     end
-    if ~isscalar(nIter)
-        error('benchmark:bench:NotAScalar','NITER must be scalar')
+    if ~isscalar(nSamples)
+        error('benchmark:bench:NotAScalar','nSamples must be scalar')
     end
-    if ~isnumeric(nIter)
-        error('benchmark:bench:NonNumeric','NITER must be numeric')
+    if ~isnumeric(nSamples)
+        error('benchmark:bench:NonNumeric','nSamples must be numeric')
     end
-    if nIter <= 0
-        error('benchmark:bench:NonPositive','NITER must be positive')
+    if nSamples <= 0
+        error('benchmark:bench:NonPositive','nSamples must be positive')
     end
     if ~isscalar(verbosity)
         error('benchmark:bench:NotAScalar','VERBOSITY must be a scalar')
@@ -61,25 +61,25 @@ function info = bench(computation, nIter, verbosity, doplot)
     end
 
     meanTime = mean(tTest(6:end)) - cost_of_clock_call;
-    numSamples = ceil(1000 * cost_of_clock_call / meanTime);
+    nIters = ceil(1000 * cost_of_clock_call / meanTime);
 
     % Benchmark
     nWarmup = 20;
-    tSample = zeros(1,nIter+nWarmup);
+    tSample = zeros(1,nSamples+nWarmup);
 
     fprintf('Sampling %d times with %d iterations/sample (estimated time: %.2f seconds)\n', ...
-        nIter, numSamples, (nIter+nWarmup) * numSamples * meanTime)
+        nSamples, nIters, (nSamples+nWarmup) * nIters * meanTime)
 
-    for i = 1:nIter+nWarmup
+    for i = 1:nSamples+nWarmup
         tic;
-        for j = 1:numSamples
+        for j = 1:nIters
             computation();
         end
         tSample(i) = toc;
     end
 
     tSample = tSample - cost_of_clock_call;
-    tSample = tSample / numSamples;
+    tSample = tSample / nIters;
 
     meanTime = mean(tSample(nWarmup+1:end));
     stdTime  = std(tSample(nWarmup+1:end));
@@ -101,8 +101,8 @@ function info = bench(computation, nIter, verbosity, doplot)
     if nargout > 0
         info.clock_resolution = clock_resolution;
         info.cost_of_clock_call = cost_of_clock_call;
-        info.number_of_samples = nIter;
-        info.iterations_per_sample = numSamples;
+        info.number_of_samples = nSamples;
+        info.iterations_per_sample = nIters;
         info.mean_time = meanTime;
         info.stdev_time = stdTime;
         info.ci_mean = meanTimeCi;
