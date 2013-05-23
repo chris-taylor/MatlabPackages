@@ -68,9 +68,24 @@ classdef Date
             result = d1.asDatenum == d2.asDatenum;
         end
         
+        function d2 = plus(d1, timedelta)
+            d2 = timedelta + d1;
+        end
+        
+        function td = minus(d1, d2)
+            td = datetime.TimeDelta.fromDouble(d1.asDatenum - d2.asDatenum);
+        end
+        
         function disp(obj)
             str = sprintf('datetime.Date(%d,%d,%d)',obj.year,obj.month,obj.day);
             disp(str);
+        end
+    end
+    
+    methods (Static = true)
+        function obj = fromDatenum(dn)
+            [y, m, d] = datevec(dn);
+            obj = datetime.Date(y,m,d);
         end
     end
     

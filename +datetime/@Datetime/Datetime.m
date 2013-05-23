@@ -79,4 +79,13 @@ classdef Datetime < datetime.Date
         end
     end
     
+    methods (Static = true)
+        function obj = fromDatenum(dn)
+            [y, m, d, h, mn, s] = datevec(dn);
+            ms = round(1000 * rem(s,60)/60);
+            s  = floor(s);
+            obj = datetime.Datetime(y,m,d,h,mn,s,ms);
+        end
+    end
+    
 end
