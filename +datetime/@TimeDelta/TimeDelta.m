@@ -22,12 +22,11 @@ classdef TimeDelta
             td.milliseconds = inp.milliseconds;
             
             % Compute delta
-            td.delta = td.days + td.hours / 24 + td.minutes / (24 * 60) + ...
-                td.seconds / (24 * 60 * 60) + td.milliseconds / (24 * 60 * 60 * 1000);
-        end
-        
-        function t2 = plus(td, t1)
-            t2 = t1.fromDatenum(t1.asDatenum + td.delta);
+            td.delta = td.days + ...
+                       td.hours / datetime.HOURS_PER_DAY + ...
+                       td.minutes / datetime.MINUTES_PER_DAY + ...
+                       td.seconds / datetime.SECONDS_PER_DAY + ...
+                       td.milliseconds / datetime.MILLIS_PER_DAY;
         end
         
         function disp(td)
@@ -37,7 +36,7 @@ classdef TimeDelta
         end
     end
     
-    methods (Static = true)
+    methods (Static = true, Access = private)
         function inp = ParseInputs(args)
             p = inputParser;
             p.addParamValue('days', 0, @isscalar)
@@ -48,12 +47,14 @@ classdef TimeDelta
             p.parse(args{:})
             inp = p.Results;
         end
-        
+    end
+    
+    methods (Static = true)    
         function td = fromDouble(x)
-            d = floor(x); x = 24 * (x - d);
-            h = floor(x); x = 60 * (x - h);
-            m = floor(x); x = 60 * (x - m);
-            s = floor(x); x = 1000 * (x - s);
+            d  = floor(x); x = 24 * (x - d);
+            h  = floor(x); x = 60 * (x - h);
+            m  = floor(x); x = 60 * (x - m);
+            s  = floor(x); x = 1000 * (x - s);
             ms = floor(x);
             
             td = datetime.TimeDelta('days',d,'hours',h,'minutes',m,...

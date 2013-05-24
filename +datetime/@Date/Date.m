@@ -6,7 +6,16 @@ classdef Date
         day
     end
     
+    properties (Access = private)
+        dnum
+    end
+    
     methods
+        
+        %========================
+        % Constructor
+        %========================
+        
         function obj = Date(y, m, d)
             if y < datetime.MIN_YEAR || y > datetime.MAX_YEAR
                 error('datetime:Date:BadYear', 'Year must be between 0 and 9999')
@@ -21,6 +30,10 @@ classdef Date
             obj.month = m;
             obj.day = d;
         end
+        
+        %========================
+        % Conversion methods
+        %========================
         
         function d = asDatenum(obj)
             d = datenum(obj.year, obj.month, obj.day);
@@ -44,9 +57,13 @@ classdef Date
             end
         end
         
-        function w = weekday(obj)
-            w = weekday(obj.asDatenum);
+        function str = asString(obj)
+            str = sprintf('datetime.Date(%d,%d,%d)',obj.year,obj.month,obj.day);
         end
+        
+        %========================
+        % Comparison operators
+        %========================
         
         function result = lt(d1, d2)
             result = d1.asDatenum < d2.asDatenum;
@@ -68,18 +85,39 @@ classdef Date
             result = d1.asDatenum == d2.asDatenum;
         end
         
-        function d2 = plus(d1, timedelta)
-            d2 = timedelta + d1;
+        %========================
+        % Arithmetic operators
+        %========================
+        
+        function out = plus(d, in)
+            if isa(in,'datetime.TimeDelta')
+                % Date plus a TimeDelta is another Date
+                out = d.fromDatenum(d.asDatenum + in.delta);
+            end
         end
         
-        function td = minus(d1, d2)
-            td = datetime.TimeDelta.fromDouble(d1.asDatenum - d2.asDatenum);
+        function out = minus(d, in)
+            if isa(in,'datetime.Date')
+                % Difference of two Dates is a TimeDelta
+                out = datetime.TimeDelta.fromDouble(d.asDatenum - in.asDatenum);
+            elseif isa(in,'datetime.TimeDelta')
+                % Date minus a TimeDelta is another Date
+                out = d.fromDatenum(d.asDatenum - in.delta);
+            end
+        end
+        
+        %========================
+        % Derived methods
+        %========================
+        
+        function w = weekday(obj)
+            w = weekday(obj.asDatenum);
         end
         
         function disp(obj)
-            str = sprintf('datetime.Date(%d,%d,%d)',obj.year,obj.month,obj.day);
-            disp(str);
+            disp(obj.asString);
         end
+        
     end
     
     methods (Static = true)
