@@ -60,7 +60,7 @@ classdef Stack < containers.Queue
         end
         
         %========================
-        % stack methods
+        % Queue methods
         %========================
         
         function push(s,e)
