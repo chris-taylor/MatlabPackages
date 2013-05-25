@@ -1,5 +1,5 @@
-classdef PathWalker
-   
+classdef PathWalker < iterator.Iterable
+
     properties (Access = private)
         tovisit = java.util.LinkedList;
     end
@@ -32,11 +32,12 @@ classdef PathWalker
             
             for ii = 1:length(contents)
                 relpath = contents(ii).name;
+                isdir   = contents(ii).isdir;
                 abspath = fullfile(dirpath, relpath);
-                if exist(abspath,'dir') && ~strcmp(relpath,'.') && ~strcmp(relpath,'..')
+                if isdir && ~strcmp(relpath,'.') && ~strcmp(relpath,'..')
                     val.dirnames{end+1} = abspath;
                     p.tovisit.add(abspath);
-                elseif exist(abspath,'file')
+                elseif os.path.isfile(abspath)
                     val.filenames{end+1} = abspath;
                 end
             end
