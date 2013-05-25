@@ -1,4 +1,4 @@
-classdef Container
+classdef Container < handle
     
     methods (Abstract)
         
@@ -25,6 +25,24 @@ classdef Container
         % the class methods 'filter', 'map', 'traverse' and 'traverse1', however it may sometimes be
         % useful to users of the class, so it is exposed here.
         iterator(obj)
+        
+    end
+    
+    methods
+        
+        %===================
+        % Convenience methods
+        %===================
+        
+        function res = values(obj)
+            res = cell(1,obj.size);
+            itr = obj.iterator();
+            n = 0;
+            while itr.hasNext();
+                n = n + 1;
+                res{n} = itr.next();
+            end
+        end
         
     end
     
