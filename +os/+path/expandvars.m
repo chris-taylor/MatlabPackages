@@ -14,6 +14,8 @@ for ii = 1:length(vars)
 end
 
 for ii = 1:length(vars)
-    path = regexprep(path, ['\${' vars{ii} '}'], vals{ii});
+    if ~isempty(vals{ii})
+        path = regexprep(path, ['\${' vars{ii} '}'], vals{ii});
+    end
 end
     
