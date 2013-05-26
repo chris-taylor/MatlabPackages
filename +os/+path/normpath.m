@@ -1,4 +1,4 @@
-function path = normpath(path)
+function newpath = normpath(path)
 % NORMPATH Normalize a path name by collapsing redundant separators and
 % up-level references, so that A//B, A/B/, A/./B and A/foo/../B all become
 % A/B. On Windows it converts forward slashes to back slashes. To normalize
@@ -21,4 +21,8 @@ while k <= n
     end
 end
 
-path = fullfile(parts{:});
+newpath = fullfile(parts{:});
+
+if path(1) == '/' || path(1) == '\'
+    newpath = [filesep newpath];
+end
