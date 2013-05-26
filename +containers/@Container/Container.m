@@ -28,13 +28,11 @@ classdef Container < handle
         
     end
     
-    methods
-        
-        %===================
-        % Convenience methods
-        %===================
+    
+    methods (Access = public)
         
         function res = values(obj)
+            % VALUES Returns a cell array of the values in the containers.
             res = cell(1,obj.size);
             itr = obj.iterator();
             n = 0;
@@ -43,10 +41,6 @@ classdef Container < handle
                 res{n} = itr.next();
             end
         end
-        
-    end
-    
-    methods (Access = public)
         
         function filter(obj, pred)
             % FILTER Filters the elements of the container that do not satisfy the supplied
