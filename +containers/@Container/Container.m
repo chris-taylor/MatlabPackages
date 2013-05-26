@@ -28,6 +28,13 @@ classdef Container < handle
         
     end
     
+    methods (Static)
+        
+        % Return a new, empty version of the collection
+        newobj = new()
+        
+    end
+    
     
     methods (Access = public)
         
@@ -54,12 +61,21 @@ classdef Container < handle
         end
         
         function map(obj, fun)
-            % MAP Applies the supplied function to every object in the container.
-            it = obj.iterator;
-            while it.hasNext
-                e = it.next;
-                it.remove;
-                obj.add(fun(e));
+            % MAP Applies the supplied function to every object in the
+            % container. Since new objects cannot be added to a container
+            % while iterating, we instead create a temporary container and
+            % add the transformed values to it, and then transfer them to
+            % the old container afterward.
+            new = obj.new;
+            itr = obj.iterator;
+            while itr.hasNext
+                e = itr.next;
+                itr.remove;
+                new.add(fun(e));
+            end
+            itr = new.iterator;
+            while itr.hasNext
+                obj.add(itr.next);
             end
         end
         

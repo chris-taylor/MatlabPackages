@@ -77,4 +77,10 @@ classdef Stack < containers.Queue
         
     end
     
+    methods (Static)
+        function newobj = new()
+            newobj = containers.Stack;
+        end
+    end
+    
 end

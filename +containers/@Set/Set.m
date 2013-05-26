@@ -61,4 +61,12 @@ classdef Set < containers.Container
         
     end
     
+    methods (Static, Access = public)
+        
+        function newobj = new()
+            newobj = containers.Set;
+        end
+        
+    end
+    
 end

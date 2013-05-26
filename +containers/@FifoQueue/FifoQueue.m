@@ -77,4 +77,10 @@ classdef FifoQueue < containers.Queue
         
     end
     
+    methods (Static)
+        function newobj = new()
+            newobj = containers.FifoQueue;
+        end
+    end
+    
 end
